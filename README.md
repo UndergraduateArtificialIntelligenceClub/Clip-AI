@@ -1,46 +1,74 @@
 # Clip-AI
 
-Finds the most viral moments in long podcasts and turns them into short clips ready to post.
+Upload a long podcast and Clip-AI finds the moments most likely to go viral, then cuts them into short clips ready to post.
 
-| Folder | Team | What it is |
+## How it works
+
+```mermaid
+flowchart LR
+  U([User]) --> FE[Next.js website]
+  FE -- upload / status / clips --> API[FastAPI]
+  API --> DB[(Postgres)]
+  API --> FS[(File storage)]
+  API -- queue job --> R[(Redis)]
+  R --> W[Celery worker]
+  W -- run_pipeline --> P[Pipeline]
+  P --> FF[FFmpeg]
+  P --> AI[OpenAI: Whisper + GPT]
+  W -- progress + clips --> DB
+```
+
+1. The user uploads a video. The API saves it and queues a job.
+2. A background worker runs the pipeline:
+
+```mermaid
+flowchart LR
+  A[Extract audio] --> B[Transcribe] --> C[Split into 30–90 s windows] --> D[LLM scores each window] --> E[Cut top clips]
+```
+
+3. The website checks progress every few seconds, then shows the clips to approve, trim, and download.
+
+## Tech stack
+
+| Tech | What it does here |
+| --- | --- |
+| **FFmpeg** | Pulls audio out of the video and cuts the final clips |
+| **Whisper API** | Speech to text, with timestamps that tell us where to cut |
+| **GPT + LangChain** | Scores how viral each part of the transcript could be |
+| **OpenAI embeddings + pgvector** | Compares clips by meaning (planned for v2) |
+| **FastAPI** | The backend API |
+| **Celery + Redis** | Runs the slow pipeline in the background |
+| **Postgres** | Stores videos, jobs, and clips |
+| **Next.js + TypeScript + Tailwind** | The website |
+| **Docker Compose** | Runs Postgres and Redis locally with one command |
+| **GitHub Actions** | Runs lint and tests on every PR |
+
+## Repo layout
+
+| Folder | Team | |
 | --- | --- | --- |
 | [`pipeline/`](pipeline/) | Pipeline | Python package: video in, scored clips out |
-| [`backend/`](backend/) | Backend | FastAPI + Celery + Postgres + Redis |
-| [`frontend/`](frontend/) | Frontend | Next.js website |
-| [`docs/`](docs/) | Everyone | Architecture and the shared contracts |
+| [`backend/`](backend/) | Backend | API, database, background worker |
+| [`frontend/`](frontend/) | Frontend | Website |
+| [`docs/`](docs/) | Everyone | [Architecture](docs/architecture.md) and the shared [contracts](docs/contracts/) |
 
-Start with [`docs/architecture.md`](docs/architecture.md), then your team's README.
+Each team can work on its own. Until the other side is ready, the backend uses a **fake pipeline** (`PIPELINE_MODE=fake`) and the frontend uses a **mock API** (`NEXT_PUBLIC_API_MODE=mock`). Both return the example data in `docs/contracts/examples/`.
 
-## Each team works on its own
+## Getting started
 
-Teams connect at two points, both defined in [`docs/contracts/`](docs/contracts/):
+```bash
+git clone https://github.com/UndergraduateArtificialIntelligenceClub/Clip-AI.git
+cd Clip-AI
+cp .env.example .env      # add your own API key, never commit it
+```
 
-- **Pipeline → Backend:** `run_pipeline()` and the shapes in `pipeline/pipeline/models.py`
-- **Backend → Frontend:** the REST API in `backend/app/schemas.py` and `frontend/lib/types.ts`
-
-Until the other side is ready, each team uses a fake:
-
-| Team | Uses | Switch |
-| --- | --- | --- |
-| Backend | `fake_run_pipeline()` | `PIPELINE_MODE=fake` / `real` |
-| Frontend | `lib/mockApi.ts` | `NEXT_PUBLIC_API_MODE=mock` / `real` |
-| Pipeline | Saved OpenAI replies in tests, `--fake` on the CLI | — |
+Then follow your team's README: [pipeline](pipeline/README.md), [backend](backend/README.md), or [frontend](frontend/README.md).
 
 ## Workflow
 
 1. Pick an issue on the Projects board and move it to **In Progress**.
-2. Create a branch: `git checkout -b feature/<issue#>-short-name` (or `fix/...`).
-3. Commit small changes and open a PR into `main`. Write `Closes #<issue#>` in the description.
-4. CI must pass and the project lead must approve.
-5. After approval, the PR is merged.
+2. Create a branch: `git checkout -b feature/<issue#>-short-name`
+3. Open a PR into `main` with `Closes #<issue#>` in the description.
+4. CI must pass and the project lead must approve before merging.
 
 Direct pushes to `main` are blocked.
-
-## Local setup
-
-```bash
-cp .env.example .env      # add your own API key
-docker compose up -d      # Postgres + Redis (backend only)
-```
-
-Then follow your team's README. Never commit `.env`, videos, or model files.
