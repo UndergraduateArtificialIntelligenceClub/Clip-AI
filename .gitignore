@@ -1,12 +1,27 @@
+# Python
 __pycache__/
 *.py[cod]
 .venv/
 venv/
-.env
 .pytest_cache/
 .ruff_cache/
 *.egg-info/
+
+# Secrets
+.env
+
+# Node
+node_modules/
+
+# Generated files and media (never commit videos or models)
+storage/
+out/
 data/
-models/
 *.pt
 *.ckpt
+*.mp4
+*.mov
+*.mp3
+*.wav
+!docs/contracts/examples/sample_clip.mp4
+!frontend/public/sample_clip.mp4
