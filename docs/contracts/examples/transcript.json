@@ -1,0 +1,10 @@
+{
+  "language": "en",
+  "segments": [
+    { "start": 0.0, "end": 4.2, "text": "Welcome back to the podcast." },
+    { "start": 4.2, "end": 11.8, "text": "Today we're talking about why so many people wake up at 3am and can't fall back asleep." },
+    { "start": 11.8, "end": 19.5, "text": "Here's the surprising part: it usually has nothing to do with your bedroom." },
+    { "start": 19.5, "end": 27.1, "text": "It's a cortisol spike, and the timing of your morning light sets when it happens." },
+    { "start": 27.1, "end": 34.0, "text": "Get ten minutes of sunlight before 9am and most people see a change within a week." }
+  ]
+}
