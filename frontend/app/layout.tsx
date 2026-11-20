@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
-import Link from "next/link";
+import Navbar from "./navbar";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -22,20 +22,20 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      suppressHydrationWarning
+      className={`${geistSans.variable} ${geistMono.variable} dark h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col">
-        <header className="border-b border-black/10 dark:border-white/10">
-          <nav className="mx-auto flex max-w-5xl items-center gap-6 px-4 py-3">
-            <Link href="/" className="font-semibold">
-              Clip-AI
-            </Link>
-            <Link href="/videos" className="text-sm opacity-70 hover:opacity-100">
-              Videos
-            </Link>
-          </nav>
-        </header>
-        <main className="mx-auto w-full max-w-5xl flex-1 px-4 py-8">{children}</main>
+      <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html:
+              '(function(){try{var t=localStorage.getItem("clip-ai-theme");document.documentElement.classList.toggle("dark",t? t==="dark":true)}catch(e){document.documentElement.classList.add("dark")}})();',
+          }}
+        />
+      </head>
+      <body className="min-h-full">
+        <Navbar />
+        <main className="mx-auto w-full max-w-[1240px] flex-1 px-5 lg:px-8">{children}</main>
       </body>
     </html>
   );
