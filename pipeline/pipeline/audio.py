@@ -12,13 +12,10 @@ def extract_audio(video_path: str, out_dir: str) -> str:
     Command: ffmpeg -i source.mp4 -vn -ac 1 -ar 16000 -b:a 32k audio.mp3
     """
     out_path = Path(out_dir) / "audio.mp3"
-    out_path.parent.mkdir(parents=True, exist_ok=True)
     subprocess.run(
         [
             "ffmpeg",
             "-y",  # overwrite audio.mp3 if it is already there
-            "-loglevel",
-            "error",
             "-i",
             str(video_path),
             "-vn",
