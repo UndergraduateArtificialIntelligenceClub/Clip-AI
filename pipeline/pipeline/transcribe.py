@@ -14,3 +14,9 @@ def transcribe(pieces: list[tuple[str, float]]) -> Transcript:
 def shift_segments(segments: list[Segment], offset: float) -> list[Segment]:
     """Return copies of segments moved later by offset seconds."""
     return [Segment(start=s.start + offset, end=s.end + offset, text=s.text) for s in segments]
+
+
+def parse_whisper_reply(reply: dict, offset: float) -> list[Segment]:
+    """Turn a Whisper verbose_json reply into Segments, shifted by offset seconds."""
+    segments = [Segment(start=s["start"], end=s["end"], text=s["text"]) for s in reply["segments"]]
+    return shift_segments(segments, offset)
