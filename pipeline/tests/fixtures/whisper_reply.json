@@ -1,0 +1,32 @@
+{
+  "task": "transcribe",
+  "language": "english",
+  "duration": 8.5,
+  "text": "Welcome back to the podcast. Today we're talking about sleep.",
+  "segments": [
+    {
+      "id": 0,
+      "seek": 0,
+      "start": 0.0,
+      "end": 4.2,
+      "text": " Welcome back to the podcast.",
+      "tokens": [50364, 2381, 646, 281, 264, 16843, 13, 50574],
+      "temperature": 0.0,
+      "avg_logprob": -0.21,
+      "compression_ratio": 1.1,
+      "no_speech_prob": 0.01
+    },
+    {
+      "id": 1,
+      "seek": 0,
+      "start": 4.2,
+      "end": 8.5,
+      "text": " Today we're talking about sleep.",
+      "tokens": [50574, 2692, 321, 434, 1417, 466, 3647, 13, 50789],
+      "temperature": 0.0,
+      "avg_logprob": -0.18,
+      "compression_ratio": 1.0,
+      "no_speech_prob": 0.02
+    }
+  ]
+}
