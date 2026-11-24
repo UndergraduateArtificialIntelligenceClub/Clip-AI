@@ -3,18 +3,19 @@
 import subprocess
 from pathlib import Path
 
-
 from .models import Candidate
 
+
 def _srt_time(seconds: float) -> str:
-    ms = int(round(seconds*1000))
-    h,ms = divmod(ms,3_600_000)
-    m,ms = divmod(ms,60_000)
-    s,ms = divmod(ms,1000)
+    ms = int(round(seconds * 1000))
+    h, ms = divmod(ms, 3_600_000)
+    m, ms = divmod(ms, 60_000)
+    s, ms = divmod(ms, 1000)
 
     return f"{h:02d}:{m:02d}:{s:02d},{ms:03d}"
 
-def write_srt(segments, clip_start: float,clip_end: float,srt_path: Path)->None:
+
+def write_srt(segments, clip_start: float, clip_end: float, srt_path: Path) -> None:
     """Write captions for one clip. Times are shifted so the clip starts at 0"""
 
     lines = []
@@ -26,12 +27,14 @@ def write_srt(segments, clip_start: float,clip_end: float,srt_path: Path)->None:
         start = max(seg.start, clip_start) - clip_start
         end = min(seg.end, clip_end) - clip_start
         lines.append(f"{n}\n{_srt_time(start)} --> {_srt_time(end)}\n{seg.text.strip()}\n")
-        n+=1
+        n += 1
 
-    srt_path.write_text("\n".join(lines), encoding="utf-8")    
+    srt_path.write_text("\n".join(lines), encoding="utf-8")
 
-def cut_clip(video_path: str, candidate: Candidate, out_path: str, segments= None,
-             vertical: bool = False) -> str:
+
+def cut_clip(
+    video_path: str, candidate: Candidate, out_path: str, segments=None, vertical: bool = False
+) -> str:
     """Cut candidate.start to candidate.end into out_path and return out_path.
 
     Command: ffmpeg -ss START -to END -i source.mp4 -c:v libx264 -c:a aac out.mp4
@@ -54,10 +57,14 @@ def cut_clip(video_path: str, candidate: Candidate, out_path: str, segments= Non
         filters.append(f"subtitles='{srt.as_posix()}':force_style='{style}'")
 
     cmd = [
-        "ffmpeg", "-y",
-        "-ss", str(candidate.start),
-        "-to", str(candidate.end),
-        "-i", str(video_path),
+        "ffmpeg",
+        "-y",
+        "-ss",
+        str(candidate.start),
+        "-to",
+        str(candidate.end),
+        "-i",
+        str(video_path),
     ]
     if filters:
         cmd += ["-vf", ",".join(filters)]
