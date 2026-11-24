@@ -5,7 +5,7 @@ import subprocess
 
 from .models import Candidate
 
-def _srt_time(seconds:float) -> str:
+def _srt_time(seconds: float) -> str:
     ms = int(round(seconds*1000))
     h,ms = divmod(ms,3_600_000)
     m,ms = divmod(ms,60_000)
@@ -13,7 +13,7 @@ def _srt_time(seconds:float) -> str:
 
     return f"{h:02d}:{m:02d}:{s:02d},{ms:03d}"
 
-def write_srt(segments, clip_start:float,clip_end:float,srt_path:Path)->None:
+def write_srt(segments, clip_start: float,clip_end: float,srt_path: Path)->None:
     """Write captions for one clip. Times are shifted so the clip starts at 0"""
 
     lines = []
