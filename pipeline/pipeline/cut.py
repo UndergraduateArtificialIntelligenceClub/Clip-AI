@@ -29,7 +29,7 @@ def write_srt(segments, clip_start:float,clip_end:float,srt_path:Path)->None:
 
     srt_path.write_text("\n".join(lines), encoding="utf-8")    
 
-def cut_clip(video_path: str, candidate: Candidate, out_path: str, segments: None,
+def cut_clip(video_path: str, candidate: Candidate, out_path: str, segments= None,
              vertical: bool = False) -> str:
     """Cut candidate.start to candidate.end into out_path and return out_path.
 
@@ -49,10 +49,10 @@ def cut_clip(video_path: str, candidate: Candidate, out_path: str, segments: Non
     if segments:
         srt = out.with_suffix(".srt")
         write_srt(segments, float(candidate.start), float(candidate.end), srt)
-        style = "FontSize=14, Alignment=2,MarginV=40,Outline=2"
+        style = "FontSize=14,Alignment=2,MarginV=40,Outline=2"
         filters.append(f"subtitles='{srt.as_posix()}':force_style='{style}'")
 
-        cmd = [
+    cmd = [
         "ffmpeg", "-y",
         "-ss", str(candidate.start),
         "-to", str(candidate.end),
