@@ -35,8 +35,10 @@ def run_pipeline(
     on_progress("cutting", 0.85)
     results = []
     for i, c in enumerate(candidates):
-        path = cut_clip(video_path, c, str(clips_dir / f"clip_{i}.mp4"))
+        path = cut_clip(video_path, c, str(clips_dir / f"clip_{i}.mp4"),
+                        segments=transcript.segments, vertical=True)
         results.append(ClipResult(**c.model_dump(), file_path=path))
 
     on_progress("done", 1.0)
     return results
+
