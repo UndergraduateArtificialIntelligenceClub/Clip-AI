@@ -1,7 +1,8 @@
 """Stage 6: cut clips out of the original video with FFmpeg."""
 
-from pathlib import Path
 import subprocess
+from pathlib import Path
+
 
 from .models import Candidate
 
